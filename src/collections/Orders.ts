@@ -14,7 +14,7 @@ async function sendOrderUpdateNotification(order: any) {
 export const Orders: CollectionConfig = {
   slug: 'orders',
   labels: { singular: 'Order', plural: 'Orders' },
-  access: { read: () => true, create: () => true, update: () => true },
+  access: { read: () => true, create: () => true, update: () => true, delete: () => true },
   admin: {
     useAsTitle: 'receiptId',
     defaultColumns: ['receiptId', 'collectorName', 'total', 'status', 'createdAt'],

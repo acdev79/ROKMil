@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  access: { read: () => true },
+  access: { read: () => true, create: () => true, update: () => true, delete: () => true },
   labels: { singular: 'Image', plural: 'Images' },
   admin: {
     description: 'All uploaded images. Cloudflare R2 handles storage; images auto-resize on upload.',

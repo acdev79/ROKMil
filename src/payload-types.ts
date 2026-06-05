@@ -72,6 +72,8 @@ export interface Config {
     specimens: Specimen;
     discounts: Discount;
     orders: Order;
+    members: Member;
+    passkeys: Passkey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +86,8 @@ export interface Config {
     specimens: SpecimensSelect<false> | SpecimensSelect<true>;
     discounts: DiscountsSelect<false> | DiscountsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
+    members: MembersSelect<false> | MembersSelect<true>;
+    passkeys: PasskeysSelect<false> | PasskeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -302,7 +306,7 @@ export interface Discount {
   createdAt: string;
 }
 /**
- * All submitted orders. View the receipt first — use Edit tab to make changes.
+ * Click a Receipt ID to view the order. Use the Edit tab to make changes.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
@@ -342,6 +346,81 @@ export interface Order {
   fulfilledAt?: string | null;
   deliveryMethod?: ('pickup' | 'delivery' | 'other') | null;
   currency?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * ROKMil members. Approve access requests, manage verification, and view member profiles.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members".
+ */
+export interface Member {
+  id: number;
+  firstName: string;
+  lastName: string;
+  fullName?: string | null;
+  email: string;
+  /**
+   * Include country code e.g. +12125550000
+   */
+  phone: string;
+  preferredContact?: ('sms' | 'email' | 'call' | 'whatsapp') | null;
+  status: 'pending_review' | 'approved' | 'active' | 'suspended';
+  verified?: boolean | null;
+  /**
+   * Grants access without SMS verification. Use as fallback.
+   */
+  adminVerifiedOverride?: boolean | null;
+  pinHash?: string | null;
+  verificationCode?: string | null;
+  verificationExpiry?: string | null;
+  /**
+   * Reset to 0 if member is locked out.
+   */
+  verificationAttempts?: number | null;
+  wishlist?: (number | Specimen)[] | null;
+  favoriteCategories?: ('flower' | 'bonsai' | 'tincture' | 'moss' | 'rare')[] | null;
+  totalSpend?: number | null;
+  orderCount?: number | null;
+  lastOrderAt?: string | null;
+  entryMethod?: ('request' | 'passkey' | 'admin') | null;
+  passkeyUsed?: string | null;
+  requestMessage?: string | null;
+  joinedAt?: string | null;
+  /**
+   * Team only — never shown to member.
+   */
+  internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Generate passkeys for VIP member access. Still requires SMS verification on first login.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passkeys".
+ */
+export interface Passkey {
+  id: number;
+  codeLength?: ('4' | '6' | '9' | '12' | '16') | null;
+  /**
+   * Auto-generated on save. Share with your invited member.
+   */
+  code?: string | null;
+  /**
+   * Who is this for?
+   */
+  label?: string | null;
+  active?: boolean | null;
+  /**
+   * Single-use by default.
+   */
+  reusable?: boolean | null;
+  usedCount?: number | null;
+  usedBy?: (number | Member)[] | null;
+  expiresAt?: string | null;
+  notes?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -388,6 +467,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'orders';
         value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'members';
+        value: number | Member;
+      } | null)
+    | ({
+        relationTo: 'passkeys';
+        value: number | Passkey;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -589,6 +676,54 @@ export interface OrdersSelect<T extends boolean = true> {
   fulfilledAt?: T;
   deliveryMethod?: T;
   currency?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members_select".
+ */
+export interface MembersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  fullName?: T;
+  email?: T;
+  phone?: T;
+  preferredContact?: T;
+  status?: T;
+  verified?: T;
+  adminVerifiedOverride?: T;
+  pinHash?: T;
+  verificationCode?: T;
+  verificationExpiry?: T;
+  verificationAttempts?: T;
+  wishlist?: T;
+  favoriteCategories?: T;
+  totalSpend?: T;
+  orderCount?: T;
+  lastOrderAt?: T;
+  entryMethod?: T;
+  passkeyUsed?: T;
+  requestMessage?: T;
+  joinedAt?: T;
+  internalNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passkeys_select".
+ */
+export interface PasskeysSelect<T extends boolean = true> {
+  codeLength?: T;
+  code?: T;
+  label?: T;
+  active?: T;
+  reusable?: T;
+  usedCount?: T;
+  usedBy?: T;
+  expiresAt?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

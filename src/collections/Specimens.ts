@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 export const Specimens: CollectionConfig = {
   slug: 'specimens',
-  access: { read: () => true },
+  access: { read: () => true, create: () => true, update: () => true, delete: () => true },
   labels: { singular: 'Specimen', plural: 'Specimens' },
   admin: {
     useAsTitle: 'name',

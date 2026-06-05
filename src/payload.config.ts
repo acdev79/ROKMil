@@ -11,6 +11,8 @@ import { Media } from './collections/Media'
 import { Specimens } from './collections/Specimens'
 import { Discounts } from './collections/Discounts'
 import { Orders } from './collections/Orders'
+import { Members } from './collections/Members'
+import { Passkeys } from './collections/Passkeys'
 import { Settings } from './collections/Settings'
 
 const filename = fileURLToPath(import.meta.url)
@@ -26,7 +28,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Specimens, Discounts, Orders],
+  collections: [Users, Media, Specimens, Discounts, Orders, Members, Passkeys],
   globals: [Settings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
