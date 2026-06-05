@@ -21,6 +21,9 @@ export const Orders: CollectionConfig = {
     description: 'All submitted orders. View the receipt first — use Edit tab to make changes.',
     listSearchableFields: ['receiptId', 'collectorName', 'collectorEmail', 'collectorPhone'],
     components: {
+      beforeDocumentControls: [
+        '@/components/admin/OrderEditBanner',
+      ],
       views: {
         edit: {
           default: {
@@ -82,7 +85,10 @@ export const Orders: CollectionConfig = {
       labels: { singular: 'Item', plural: 'Items' },
       admin: {
         initCollapsed: true,
-        components: { RowLabel: '@/components/admin/OrderItemRowLabel' },
+        components: {
+      beforeDocumentControls: [
+        '@/components/admin/OrderEditBanner',
+      ], RowLabel: '@/components/admin/OrderItemRowLabel' },
       },
       fields: [
         { name: 'name', type: 'text', label: 'Item name', required: true },
