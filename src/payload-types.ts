@@ -328,9 +328,6 @@ export interface Order {
   subtotal?: number | null;
   deliveryFee?: number | null;
   discount?: number | null;
-  /**
-   * Positive adds, negative subtracts.
-   */
   adjustment?: number | null;
   adjustmentNote?: string | null;
   total?: number | null;

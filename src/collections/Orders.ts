@@ -23,12 +23,13 @@ export const Orders: CollectionConfig = {
     components: {
       views: {
         edit: {
-          receipt: {
+          receiptPreview: {
             Component: '@/components/admin/OrderReceiptPreview',
-            path: '/receipt',
-            Tab: {
+            path: '/receipt-preview',
+            tab: {
               label: 'Receipt Preview',
-              href: '/receipt',
+              href: '/receipt-preview',
+              order: 100,
             },
           },
         },
@@ -87,7 +88,7 @@ export const Orders: CollectionConfig = {
         { name: 'subtotal', type: 'number', label: 'Subtotal ($)', min: 0 },
         { name: 'deliveryFee', type: 'number', label: 'Delivery fee ($)', defaultValue: 0, min: 0 },
         { name: 'discount', type: 'number', label: 'Discount ($)', defaultValue: 0, min: 0 },
-        { name: 'adjustment', type: 'number', label: 'Manual adjustment ($)', defaultValue: 0, admin: { description: 'Positive adds, negative subtracts.' } },
+        { name: 'adjustment', type: 'number', label: 'Manual adjustment ($)', defaultValue: 0 },
         { name: 'adjustmentNote', type: 'text', label: 'Adjustment reason', admin: { condition: (data) => data?.adjustment !== 0 } },
         { name: 'total', type: 'number', label: 'Final total ($)', min: 0 },
       ],
