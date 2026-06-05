@@ -15,3 +15,35 @@
 .list-controls__buttons .popup-button-list__button--delete {
   display: flex !important;
 }
+
+/* ── PROMINENT DELETE BUTTON ── */
+/* Delete in list toolbar */
+.list-controls .btn[aria-label*="elete"],
+.list-controls .popup-button-list__button--delete,
+.bulk-upload__button--delete,
+button[aria-label*="Delete Selected"] {
+  background: rgba(200, 120, 112, 0.15) !important;
+  border-color: #C87870 !important;
+  color: #C87870 !important;
+}
+
+/* Delete inside document */
+.doc-controls__btn--delete,
+.btn--style-error,
+button[id*="action-delete"],
+.form-submit .btn[style*="danger"],
+.doc-controls__btn[aria-label*="Delete"] {
+  background: rgba(200, 120, 112, 0.15) !important;
+  border: 1px solid #C87870 !important;
+  color: #C87870 !important;
+  font-weight: 600 !important;
+}
+
+/* Hover states */
+.doc-controls__btn--delete:hover,
+button[aria-label*="Delete Selected"]:hover {
+  background: rgba(200, 120, 112, 0.3) !important;
+}
+
+/* Always show checkboxes in list */
+.cell-_select { opacity: 1 !important; }
