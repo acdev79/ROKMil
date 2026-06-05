@@ -73,7 +73,13 @@ export default function GalleryClient({ specimens, settings }: Props) {
   const openLightbox = useCallback((id: string) => { setLightboxId(id); setLbQty(1) }, [])
   const closeLightbox = useCallback(() => setLightboxId(null), [])
 
-  const [cart, setCart] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === 'undefined') return []
+    try {
+      const saved = localStorage.getItem('rokmil-cart')
+      return saved ? JSON.parse(saved) : []
+    } catch { return [] }
+  })
 
   const addToCart = useCallback((items: CartItem[]) => {
     setCart(prev => {
@@ -94,6 +100,12 @@ export default function GalleryClient({ specimens, settings }: Props) {
   const updateCartQty = useCallback((key: string, delta: number) => {
     setCart(prev => prev.map(i => i.key === key ? { ...i, qty: Math.min(10, Math.max(1, i.qty + delta)) } : i))
   }, [])
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('rokmil-cart', JSON.stringify(cart))
+    }
+  }, [cart])
+
   const cartCount = cart.reduce((s, i) => s + i.qty, 0)
 
   const handleCardAdd = useCallback((specimen: Specimen) => {
@@ -155,7 +167,7 @@ export default function GalleryClient({ specimens, settings }: Props) {
     setIsSubmitting(false)
   }
 
-  const handleDone = () => { setCart([]); setPanel('none'); setDonor(null); setReceiptId(''); showToast('Thank you — our curator will be in touch shortly') }
+  const handleDone = () => { if (typeof window !== 'undefined') localStorage.removeItem('rokmil-cart'); setCart([]); setPanel('none'); setDonor(null); setReceiptId(''); showToast('Thank you — our curator will be in touch shortly') }
 
   const [toast, setToast] = useState({ show: false, message: '' })
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
