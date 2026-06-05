@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import type { Specimen, CartItem, Settings } from '@/lib/types'
 import { CATEGORY_LABELS, fmt, cartItemKey } from '@/lib/types'
