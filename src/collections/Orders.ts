@@ -18,12 +18,10 @@ export const Orders: CollectionConfig = {
   admin: {
     useAsTitle: 'receiptId',
     defaultColumns: ['receiptId', 'collectorName', 'total', 'status', 'createdAt'],
-    description: 'All submitted orders. View the receipt first — use Edit tab to make changes.',
+    description: 'Click a Receipt ID to view the order. Use the Edit tab to make changes.',
     listSearchableFields: ['receiptId', 'collectorName', 'collectorEmail', 'collectorPhone'],
     components: {
-      beforeDocumentControls: [
-        '@/components/admin/OrderEditBanner',
-      ],
+      beforeDocumentControls: ['@/components/admin/OrderEditBanner'],
       views: {
         edit: {
           default: {
@@ -54,7 +52,16 @@ export const Orders: CollectionConfig = {
     ],
   },
   fields: [
-    { name: 'receiptId', type: 'text', label: 'Receipt ID', required: true, admin: { readOnly: true } },
+    {
+      name: 'receiptId',
+      type: 'text',
+      label: 'Receipt ID',
+      required: true,
+      admin: {
+        readOnly: true,
+        components: { Cell: '@/components/admin/OrderReceiptIdCell' },
+      },
+    },
     {
       name: 'status',
       type: 'select',
@@ -71,6 +78,7 @@ export const Orders: CollectionConfig = {
     {
       type: 'collapsible',
       label: '👤 Collector Details',
+      admin: { initCollapsed: true },
       fields: [
         { name: 'collectorName', type: 'text', label: 'Name', required: true },
         { name: 'collectorEmail', type: 'email', label: 'Email' },
@@ -85,10 +93,7 @@ export const Orders: CollectionConfig = {
       labels: { singular: 'Item', plural: 'Items' },
       admin: {
         initCollapsed: true,
-        components: {
-      beforeDocumentControls: [
-        '@/components/admin/OrderEditBanner',
-      ], RowLabel: '@/components/admin/OrderItemRowLabel' },
+        components: { RowLabel: '@/components/admin/OrderItemRowLabel' },
       },
       fields: [
         { name: 'name', type: 'text', label: 'Item name', required: true },
@@ -101,6 +106,7 @@ export const Orders: CollectionConfig = {
     {
       type: 'collapsible',
       label: '💰 Totals & Adjustments',
+      admin: { initCollapsed: true },
       fields: [
         { name: 'subtotal', type: 'number', label: 'Subtotal ($)', min: 0 },
         { name: 'deliveryFee', type: 'number', label: 'Delivery fee ($)', defaultValue: 0, min: 0 },
@@ -110,14 +116,29 @@ export const Orders: CollectionConfig = {
         { name: 'total', type: 'number', label: 'Final total ($)', min: 0 },
       ],
     },
-    { name: 'internalNotes', type: 'textarea', label: 'Internal Notes', admin: { description: 'Team only — never sent to collector.' } },
+    {
+      name: 'internalNotes',
+      type: 'textarea',
+      label: 'Internal Notes',
+      admin: { description: 'Team only — never sent to collector.' },
+    },
     {
       type: 'collapsible',
       label: '📦 Fulfillment',
+      admin: { initCollapsed: true },
       fields: [
         { name: 'fulfilledBy', type: 'text', label: 'Fulfilled by' },
         { name: 'fulfilledAt', type: 'date', label: 'Fulfilled at', admin: { date: { pickerAppearance: 'dayAndTime' } } },
-        { name: 'deliveryMethod', type: 'select', label: 'Delivery method', options: [{ label: 'Pickup', value: 'pickup' }, { label: 'Delivery', value: 'delivery' }, { label: 'Other', value: 'other' }] },
+        {
+          name: 'deliveryMethod',
+          type: 'select',
+          label: 'Delivery method',
+          options: [
+            { label: 'Pickup', value: 'pickup' },
+            { label: 'Delivery', value: 'delivery' },
+            { label: 'Other', value: 'other' },
+          ],
+        },
       ],
     },
     { name: 'currency', type: 'text', label: 'Currency', defaultValue: 'USD', admin: { readOnly: true } },
