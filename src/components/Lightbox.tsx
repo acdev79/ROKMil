@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import type { Specimen } from '@/lib/types'
 import { fmt, CATEGORY_LABELS } from '@/lib/types'
@@ -15,77 +15,73 @@ interface Props {
   onAdd: () => void
 }
 
-export default function Lightbox({
-  specimen, isOpen, currency, qty, inCart, onClose, onQtyChange, onAdd,
-}: Props) {
-  const panelRef = useRef<HTMLDivElement>(null)
+export default function Lightbox({ specimen, isOpen, currency, qty, inCart, onClose, onQtyChange, onAdd }: Props) {
+  const [selectedSize, setSelectedSize] = useState<'3.5g' | '28g' | '15ml'>('3.5g')
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     if (isOpen) document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
   }, [isOpen, onClose])
 
-  // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [isOpen])
 
+  // Set default size when specimen changes
+  useEffect(() => {
+    if (!specimen) return
+    if (specimen.productType === 'tincture') setSelectedSize('15ml')
+    else setSelectedSize('3.5g')
+  }, [specimen?.id])
+
   if (!specimen) return null
 
   const imgSrc = specimen.image?.sizes?.lightbox?.url || specimen.image?.url || null
+
+  const selectedPrice = specimen.productType === 'tincture'
+    ? specimen.price15ml
+    : selectedSize === '3.5g' ? specimen.price35g : specimen.price28g
+
+  const sizes = specimen.productType === 'flower'
+    ? [
+        specimen.price35g != null && { key: '3.5g' as const, label: '3.5g · Eighth', price: specimen.price35g },
+        specimen.price28g != null && { key: '28g' as const, label: '28g · Oz', price: specimen.price28g },
+      ].filter(Boolean)
+    : specimen.productType === 'tincture' && specimen.price15ml != null
+    ? [{ key: '15ml' as const, label: '15mL · Dropper', price: specimen.price15ml }]
+    : []
 
   return (
     <div
       className={`lightbox-overlay ${isOpen ? 'open' : ''}`}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="lightbox-panel" ref={panelRef}>
-        {/* Left: Image */}
+      <div className="lightbox-panel">
         <div className="lightbox-img">
           <button className="lightbox-close" onClick={onClose} aria-label="Close">✕</button>
           {imgSrc ? (
-            <Image
-              src={imgSrc}
-              alt={specimen.image?.alt || specimen.name}
-              fill
-              style={{ objectFit: 'cover' }}
-              sizes="(max-width: 640px) 100vw, 50vw"
-            />
+            <Image src={imgSrc} alt={specimen.image?.alt || specimen.name} fill style={{ objectFit: 'cover' }} sizes="(max-width: 640px) 100vw, 50vw" priority />
           ) : (
             <div className="lightbox-img-fallback">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <rect width="200" height="200" fill="#1A1A17"/>
-                <text x="100" y="106" textAnchor="middle" fontFamily="serif" fontSize="13"
-                  fill="#6E6E66" fontStyle="italic">{specimen.name}</text>
+                <text x="100" y="106" textAnchor="middle" fontFamily="serif" fontSize="13" fill="#6E6E66" fontStyle="italic">{specimen.name}</text>
               </svg>
             </div>
           )}
         </div>
 
-        {/* Right: Details */}
         <div className="lightbox-body">
-          <div className="lb-eyebrow">
-            {CATEGORY_LABELS[specimen.category] || specimen.category}
-          </div>
+          <div className="lb-eyebrow">{CATEGORY_LABELS[specimen.category] || specimen.category}</div>
           <h2 className="lb-name">{specimen.name}</h2>
-          {specimen.latinName && (
-            <div className="lb-latin">{specimen.latinName}</div>
-          )}
+          {specimen.latinName && <div className="lb-latin">{specimen.latinName}</div>}
 
-          {/* Long description — Payload rich text renders as HTML */}
-          {specimen.longDescription ? (
-            <div
-              className="lb-desc"
-              dangerouslySetInnerHTML={{ __html: specimen.longDescription }}
-            />
-          ) : (
+          {specimen.shortDescription && (
             <p className="lb-desc">{specimen.shortDescription}</p>
           )}
 
-          {/* Details table */}
           {specimen.details && specimen.details.length > 0 && (
             <div className="lb-details">
               {specimen.details.map((d, i) => (
@@ -97,18 +93,32 @@ export default function Lightbox({
             </div>
           )}
 
-          {/* Price */}
+          {/* Size selector */}
+          {sizes.length > 0 && (
+            <div className="lb-sizes">
+              <div className="lb-sizes-label">Select Size</div>
+              <div className="lb-size-grid">
+                {(sizes as Array<{ key: '3.5g' | '28g' | '15ml'; label: string; price: number }>).map((s) => (
+                  <button
+                    key={s.key}
+                    className={`lb-size-btn ${selectedSize === s.key ? 'active' : ''}`}
+                    onClick={() => setSelectedSize(s.key)}
+                  >
+                    <span className="lb-size-name">{s.key}</span>
+                    <span className="lb-size-sub">{s.label.split(' · ')[1]}</span>
+                    <span className="lb-size-price">{fmt(s.price, currency)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Price + qty */}
           <div className="lb-price">
-            {specimen.originalPrice && specimen.showOriginalPrice && (
-              <span className="lb-price-original">
-                {fmt(specimen.originalPrice, currency)}
-              </span>
-            )}
-            {fmt(specimen.price35g ?? specimen.price15ml ?? specimen.price28g ?? 0, currency)}
-            <small>suggested contribution</small>
+            {fmt(selectedPrice, currency)}
+            <small> per unit</small>
           </div>
 
-          {/* Quantity */}
           <div className="qty-row">
             <span className="qty-label">Quantity</span>
             <div className="qty-ctrl">
@@ -118,9 +128,14 @@ export default function Lightbox({
             </div>
           </div>
 
-          {/* Add button */}
+          {selectedPrice != null && (
+            <div className="lb-subtotal">
+              Subtotal: {fmt(selectedPrice * qty, currency)}
+            </div>
+          )}
+
           <button className="lb-add-btn" onClick={onAdd}>
-            {inCart ? '✓ Already Selected' : 'Add to Selection'}
+            {inCart ? '✓ Already in Selection' : 'Add to Selection'}
           </button>
         </div>
       </div>

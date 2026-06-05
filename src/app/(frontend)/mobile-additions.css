@@ -478,3 +478,14 @@
 .receipt-total-line { display: flex; justify-content: space-between; font-size: 0.82rem; color: #6E6E66; padding: 4px 0; }
 .receipt-total-positive { color: #5A7A50; }
 .receipt-total-row { display: flex; justify-content: space-between; align-items: baseline; padding: 1rem 0 0.5rem; border-top: 1px solid rgba(28,26,23,0.12); margin-top: 4px; }
+
+/* ── LIGHTBOX SIZE SELECTOR ── */
+.lb-sizes { margin: 4px 0; }
+.lb-sizes-label { font-family: var(--font-cond); font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mist); margin-bottom: 8px; }
+.lb-size-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.lb-size-btn { border: 1px solid var(--line-strong); background: transparent; padding: 10px 12px; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; flex-direction: column; gap: 2px; }
+.lb-size-btn.active { border-color: var(--bronze); background: var(--bronze-pale); }
+.lb-size-name { font-family: var(--font-cond); font-size: 1rem; font-weight: 500; color: var(--snow); }
+.lb-size-sub { font-family: var(--font-cond); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mist); }
+.lb-size-price { font-family: var(--font-cond); font-size: 0.95rem; color: var(--bronze); margin-top: 4px; }
+.lb-subtotal { font-family: var(--font-cond); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash); text-align: right; }
