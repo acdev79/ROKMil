@@ -69,6 +69,8 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    specimens: Specimen;
+    discounts: Discount;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,17 +80,23 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    specimens: SpecimensSelect<false> | SpecimensSelect<true>;
+    discounts: DiscountsSelect<false> | DiscountsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    settings: Setting;
+  };
+  globalsSelect: {
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -118,11 +126,15 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Admin users who can log in to manage the collection.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
+  name?: string | null;
+  role?: ('admin' | 'curator') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -143,12 +155,18 @@ export interface User {
   collection: 'users';
 }
 /**
+ * All uploaded images. Cloudflare R2 handles storage; images auto-resize on upload.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
+  /**
+   * Describe the image for accessibility and SEO. E.g. "Seolhae Juniper bonsai in Buncheong pot".
+   */
   alt: string;
+  caption?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -160,13 +178,133 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    lightbox?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumb?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "specimens".
+ */
+export interface Specimen {
+  id: number;
+  name: string;
+  latinName?: string | null;
+  productType: 'flower' | 'tincture';
+  category: 'flower' | 'bonsai' | 'tincture' | 'moss' | 'rare';
+  image: number | Media;
+  shortDescription: string;
+  longDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  details?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  price35g?: number | null;
+  price28g?: number | null;
+  price15ml?: number | null;
+  badge?: ('none' | 'new' | 'rare' | 'popular') | null;
+  available?: boolean | null;
+  stock?: number | null;
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Create percentage or flat-amount discounts. Apply to a single item or the whole collection.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "discounts".
+ */
+export interface Discount {
+  id: number;
+  /**
+   * Your reference name — not shown to visitors. E.g. "Spring sale 20%".
+   */
+  label: string;
+  /**
+   * Choose whether the discount is a % or a fixed dollar amount.
+   */
+  type: 'percentage' | 'flat';
+  /**
+   * For percentage: enter 20 for 20%. For flat: enter 50 for $50 off.
+   */
+  value: number;
+  scope: 'all' | 'specific' | 'category';
+  /**
+   * Only shown when "Specific specimens" is selected above.
+   */
+  specimens?: (number | Specimen)[] | null;
+  /**
+   * Only shown when "Entire category" is selected above.
+   */
+  category?: ('bonsai' | 'flower' | 'moss' | 'rare') | null;
+  /**
+   * Optional short text shown on the card, e.g. "20% off" or "Spring Sale". Leave blank to show no badge.
+   */
+  badgeText?: string | null;
+  /**
+   * Toggle this off to pause the discount without deleting it.
+   */
+  active?: boolean | null;
+  /**
+   * Leave blank to start immediately. The discount will not apply before this date.
+   */
+  startsAt?: string | null;
+  /**
+   * Leave blank for no expiry. The discount automatically deactivates after this date.
+   */
+  expiresAt?: string | null;
+  showOriginalPrice?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +321,28 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'specimens';
+        value: number | Specimen;
+      } | null)
+    | ({
+        relationTo: 'discounts';
+        value: number | Discount;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +352,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +375,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -240,6 +386,8 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -263,6 +411,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -274,6 +423,89 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        lightbox?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        thumb?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "specimens_select".
+ */
+export interface SpecimensSelect<T extends boolean = true> {
+  name?: T;
+  latinName?: T;
+  productType?: T;
+  category?: T;
+  image?: T;
+  shortDescription?: T;
+  longDescription?: T;
+  details?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  price35g?: T;
+  price28g?: T;
+  price15ml?: T;
+  badge?: T;
+  available?: T;
+  stock?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "discounts_select".
+ */
+export interface DiscountsSelect<T extends boolean = true> {
+  label?: T;
+  type?: T;
+  value?: T;
+  scope?: T;
+  specimens?: T;
+  category?: T;
+  badgeText?: T;
+  active?: T;
+  startsAt?: T;
+  expiresAt?: T;
+  showOriginalPrice?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +546,54 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Global settings for the ROKMil gallery. Changes here apply immediately.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  storeName?: string | null;
+  tagline?: string | null;
+  heroTitle?: string | null;
+  heroTitleItalic?: string | null;
+  heroSubtitle?: string | null;
+  organisersName?: string | null;
+  organisersEmail?: string | null;
+  receiptMessage?: string | null;
+  /**
+   * If checked, a copy of the receipt is emailed to the collector via Resend.
+   */
+  sendReceiptEmails?: boolean | null;
+  /**
+   * Leave blank to disable organiser notifications.
+   */
+  notifyOrganiserEmail?: string | null;
+  currency?: ('USD' | 'EUR' | 'GBP' | 'KRW' | 'AUD') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  storeName?: T;
+  tagline?: T;
+  heroTitle?: T;
+  heroTitleItalic?: T;
+  heroSubtitle?: T;
+  organisersName?: T;
+  organisersEmail?: T;
+  receiptMessage?: T;
+  sendReceiptEmails?: T;
+  notifyOrganiserEmail?: T;
+  currency?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

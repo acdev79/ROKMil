@@ -9,8 +9,12 @@ const dirname = path.dirname(__filename)
 const nextConfig: NextConfig = {
   images: {
     localPatterns: [
+      { pathname: '/api/media/file/**' },
+    ],
+    remotePatterns: [
       {
-        pathname: '/api/media/file/**',
+        protocol: 'https',
+        hostname: 'pub-555faddd19bc4d2cba1d0b255f90f0a5.r2.dev',
       },
     ],
   },
@@ -20,7 +24,6 @@ const nextConfig: NextConfig = {
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
       '.mjs': ['.mts', '.mjs'],
     }
-
     return webpackConfig
   },
   turbopack: {
