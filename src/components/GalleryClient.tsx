@@ -10,6 +10,7 @@ import Receipt from './Receipt'
 import Toast from './Toast'
 import SearchBar from './SearchBar'
 import SurpriseBanner from './SurpriseBanner'
+import AnnouncementBanner from './AnnouncementBanner'
 import SwipeMode from './SwipeMode'
 
 interface Props {
@@ -100,7 +101,7 @@ export default function GalleryClient({ specimens, settings }: Props) {
     const items: CartItem[] = []
     if (specimen.productType === 'flower') {
       if (qty.qty35g > 0 && specimen.price35g) {
-        items.push({ key: cartItemKey(specimen.id, '3.5g'), specimenId: specimen.id, specimenName: specimen.name, latinName: specimen.latinName, category: specimen.category, image: specimen.image, size: '3.5g', sizeLabel: '3.5g · Eighth', price: specimen.price35g, qty: qty.qty35g })
+        items.push({ key: cartItemKey(specimen.id, '3.5g'), specimenId: specimen.id, specimenName: specimen.name, latinName: specimen.latinName, category: specimen.category, image: specimen.image, size: '3.5g', sizeLabel: `3.5g · ${(settings as any)?.label35g || 'Eighth'}`, price: specimen.price35g, qty: qty.qty35g })
       }
       if (qty.qty28g > 0 && specimen.price28g) {
         items.push({ key: cartItemKey(specimen.id, '28g'), specimenId: specimen.id, specimenName: specimen.name, latinName: specimen.latinName, category: specimen.category, image: specimen.image, size: '28g', sizeLabel: '28g · Oz', price: specimen.price28g, qty: qty.qty28g })
@@ -119,7 +120,7 @@ export default function GalleryClient({ specimens, settings }: Props) {
     if (!specimen) return
     const items: CartItem[] = []
     if (specimen.productType === 'flower' && specimen.price35g) {
-      items.push({ key: cartItemKey(specimen.id, '3.5g'), specimenId: specimen.id, specimenName: specimen.name, latinName: specimen.latinName, category: specimen.category, image: specimen.image, size: '3.5g', sizeLabel: '3.5g · Eighth', price: specimen.price35g, qty: 1 })
+      items.push({ key: cartItemKey(specimen.id, '3.5g'), specimenId: specimen.id, specimenName: specimen.name, latinName: specimen.latinName, category: specimen.category, image: specimen.image, size: '3.5g', sizeLabel: `3.5g · ${(settings as any)?.label35g || 'Eighth'}`, price: specimen.price35g, qty: 1 })
     } else if (specimen.productType === 'tincture' && specimen.price15ml) {
       items.push({ key: cartItemKey(specimen.id, '15ml'), specimenId: specimen.id, specimenName: specimen.name, latinName: specimen.latinName, category: specimen.category, image: specimen.image, size: '15ml', sizeLabel: '15mL · Dropper', price: specimen.price15ml, qty: 1 })
     }
@@ -185,6 +186,7 @@ export default function GalleryClient({ specimens, settings }: Props) {
           </button>
         </div>
       </header>
+      {(settings as any)?.announcementEnabled && (settings as any)?.announcementText && (<AnnouncementBanner text={(settings as any).announcementText} type={(settings as any).announcementType} expiry={(settings as any).announcementExpiry} />)}
 
       <section className="hero">
         <div>
@@ -198,7 +200,7 @@ export default function GalleryClient({ specimens, settings }: Props) {
       </section>
 
       <div className="search-wrap"><SearchBar onSearch={setSearchQuery} /></div>
-      <div className="surprise-wrap"><SurpriseBanner onActivate={() => setSwipeMode(true)} /></div>
+      <div className="surprise-wrap"><SurpriseBanner onActivate={() => setSwipeMode(true)} title={(settings as any)?.surpriseMeTitle} subtitle={(settings as any)?.surpriseMeSubtitle} buttonText={(settings as any)?.surpriseMeButtonText} /></div>
 
       <nav className="filter-bar" aria-label="Filter specimens">
         {categories.map(cat => (

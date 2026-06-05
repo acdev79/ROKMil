@@ -87,3 +87,28 @@ export function fmt(amount: number | undefined | null, currency = 'USD') {
 export function cartItemKey(specimenId: string, size: string) {
   return `${specimenId}::${size}`
 }
+
+// Extended settings fields
+export interface SettingsExtended extends Settings {
+  announcementEnabled?: boolean
+  announcementText?: string
+  announcementType?: 'info' | 'success' | 'warning'
+  announcementExpiry?: string
+  label35g?: string
+  label28g?: string
+  label15ml?: string
+  deliveryFeeEnabled?: boolean
+  deliveryFeeLabel?: string
+  deliveryFeeAmount?: number
+  deliveryFeeThreshold?: number
+  discountEnabled?: boolean
+  discountLabel?: string
+  discountType?: 'percentage' | 'fixed'
+  discountValue?: number
+  discountMinimumOrder?: number
+  receiptFooter?: string
+  surpriseMeEnabled?: boolean
+  surpriseMeTitle?: string
+  surpriseMeSubtitle?: string
+  surpriseMeButtonText?: string
+}

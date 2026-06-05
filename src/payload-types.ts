@@ -553,45 +553,101 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Setting {
   id: number;
+  /**
+   * Used in emails and receipts.
+   */
   storeName?: string | null;
+  /**
+   * Shown next to the logo in the header.
+   */
   tagline?: string | null;
+  currency?: ('USD' | 'EUR' | 'GBP' | 'KRW' | 'AUD') | null;
+  /**
+   * Toggle this on to show a banner at the top of the gallery.
+   */
+  announcementEnabled?: boolean | null;
+  /**
+   * E.g. "New drops every Friday" or "Closed this weekend — back Monday."
+   */
+  announcementText?: string | null;
+  announcementType?: ('info' | 'success' | 'warning') | null;
+  /**
+   * Banner disappears automatically after this date. Leave blank to keep it until you uncheck above.
+   */
+  announcementExpiry?: string | null;
+  /**
+   * Large text, first line.
+   */
   heroTitle?: string | null;
+  /**
+   * Large text, second line — shown in bronze italic.
+   */
   heroTitleItalic?: string | null;
+  /**
+   * Shown to the right of the title.
+   */
   heroSubtitle?: string | null;
+  /**
+   * Shown next to "3.5g" on product cards and receipts.
+   */
+  label35g?: string | null;
+  /**
+   * Shown next to "28g" on product cards and receipts.
+   */
+  label28g?: string | null;
+  /**
+   * Shown next to "15mL" on tincture cards and receipts.
+   */
+  label15ml?: string | null;
+  deliveryFeeEnabled?: boolean | null;
+  /**
+   * Shown on receipt — e.g. "Delivery", "Service fee", "Handling".
+   */
+  deliveryFeeLabel?: string | null;
+  deliveryFeeAmount?: number | null;
+  /**
+   * Orders at or above this amount get free delivery. Set to 0 to always charge.
+   */
+  deliveryFeeThreshold?: number | null;
+  /**
+   * Applies to all orders automatically.
+   */
+  discountEnabled?: boolean | null;
+  /**
+   * Shown on the receipt line item.
+   */
+  discountLabel?: string | null;
+  discountType?: ('percentage' | 'fixed') | null;
+  /**
+   * For percentage: enter 10 for 10% off. For fixed: enter 20 for $20 off.
+   */
+  discountValue?: number | null;
+  /**
+   * Set to 0 for no minimum.
+   */
+  discountMinimumOrder?: number | null;
+  /**
+   * Shown at the bottom of the receipt.
+   */
   organisersName?: string | null;
   organisersEmail?: string | null;
   receiptMessage?: string | null;
+  /**
+   * Optional disclaimer or terms shown at the very bottom of the receipt.
+   */
+  receiptFooter?: string | null;
   sendReceiptEmails?: boolean | null;
+  /**
+   * Leave blank to use team email set in environment variables.
+   */
   notifyOrganiserEmail?: string | null;
-  currency?: ('USD' | 'EUR' | 'GBP' | 'KRW' | 'AUD') | null;
+  surpriseMeEnabled?: boolean | null;
   /**
-   * Configure delivery and other fees. Changes apply immediately — no code deployment needed.
+   * Heading on the discovery banner.
    */
-  fees?: {
-    deliveryFeeEnabled?: boolean | null;
-    deliveryFeeAmount?: number | null;
-    /**
-     * Set to 0 to always charge delivery.
-     */
-    deliveryFeeThreshold?: number | null;
-    deliveryFeeLabel?: string | null;
-  };
-  /**
-   * Apply a store-wide discount to all orders.
-   */
-  discountConfig?: {
-    enabled?: boolean | null;
-    type?: ('percentage' | 'fixed') | null;
-    /**
-     * For percentage: enter 10 for 10%. For fixed: enter 20 for $20 off.
-     */
-    value?: number | null;
-    label?: string | null;
-    /**
-     * Set to 0 for no minimum.
-     */
-    minimumOrder?: number | null;
-  };
+  surpriseMeTitle?: string | null;
+  surpriseMeSubtitle?: string | null;
+  surpriseMeButtonText?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -602,32 +658,36 @@ export interface Setting {
 export interface SettingsSelect<T extends boolean = true> {
   storeName?: T;
   tagline?: T;
+  currency?: T;
+  announcementEnabled?: T;
+  announcementText?: T;
+  announcementType?: T;
+  announcementExpiry?: T;
   heroTitle?: T;
   heroTitleItalic?: T;
   heroSubtitle?: T;
+  label35g?: T;
+  label28g?: T;
+  label15ml?: T;
+  deliveryFeeEnabled?: T;
+  deliveryFeeLabel?: T;
+  deliveryFeeAmount?: T;
+  deliveryFeeThreshold?: T;
+  discountEnabled?: T;
+  discountLabel?: T;
+  discountType?: T;
+  discountValue?: T;
+  discountMinimumOrder?: T;
   organisersName?: T;
   organisersEmail?: T;
   receiptMessage?: T;
+  receiptFooter?: T;
   sendReceiptEmails?: T;
   notifyOrganiserEmail?: T;
-  currency?: T;
-  fees?:
-    | T
-    | {
-        deliveryFeeEnabled?: T;
-        deliveryFeeAmount?: T;
-        deliveryFeeThreshold?: T;
-        deliveryFeeLabel?: T;
-      };
-  discountConfig?:
-    | T
-    | {
-        enabled?: T;
-        type?: T;
-        value?: T;
-        label?: T;
-        minimumOrder?: T;
-      };
+  surpriseMeEnabled?: T;
+  surpriseMeTitle?: T;
+  surpriseMeSubtitle?: T;
+  surpriseMeButtonText?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
