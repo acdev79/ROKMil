@@ -472,3 +472,9 @@
 .cart-qty-btn { width: 26px; height: 26px; background: none; border: none; color: var(--ash); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .cart-qty-btn:hover { background: var(--raised); }
 .cart-qty-num { width: 28px; text-align: center; font-size: 0.82rem; color: var(--snow); font-family: var(--font-cond); border-left: 1px solid var(--line); border-right: 1px solid var(--line); line-height: 26px; }
+
+/* ── RECEIPT TOTALS ── */
+.receipt-totals { padding: 0.5rem 0; }
+.receipt-total-line { display: flex; justify-content: space-between; font-size: 0.82rem; color: #6E6E66; padding: 4px 0; }
+.receipt-total-positive { color: #5A7A50; }
+.receipt-total-row { display: flex; justify-content: space-between; align-items: baseline; padding: 1rem 0 0.5rem; border-top: 1px solid rgba(28,26,23,0.12); margin-top: 4px; }

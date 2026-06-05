@@ -548,8 +548,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * Global settings for the ROKMil gallery. Changes here apply immediately.
- *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings".
  */
@@ -563,15 +561,37 @@ export interface Setting {
   organisersName?: string | null;
   organisersEmail?: string | null;
   receiptMessage?: string | null;
-  /**
-   * If checked, a copy of the receipt is emailed to the collector via Resend.
-   */
   sendReceiptEmails?: boolean | null;
-  /**
-   * Leave blank to disable organiser notifications.
-   */
   notifyOrganiserEmail?: string | null;
   currency?: ('USD' | 'EUR' | 'GBP' | 'KRW' | 'AUD') | null;
+  /**
+   * Configure delivery and other fees. Changes apply immediately — no code deployment needed.
+   */
+  fees?: {
+    deliveryFeeEnabled?: boolean | null;
+    deliveryFeeAmount?: number | null;
+    /**
+     * Set to 0 to always charge delivery.
+     */
+    deliveryFeeThreshold?: number | null;
+    deliveryFeeLabel?: string | null;
+  };
+  /**
+   * Apply a store-wide discount to all orders.
+   */
+  discountConfig?: {
+    enabled?: boolean | null;
+    type?: ('percentage' | 'fixed') | null;
+    /**
+     * For percentage: enter 10 for 10%. For fixed: enter 20 for $20 off.
+     */
+    value?: number | null;
+    label?: string | null;
+    /**
+     * Set to 0 for no minimum.
+     */
+    minimumOrder?: number | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -591,6 +611,23 @@ export interface SettingsSelect<T extends boolean = true> {
   sendReceiptEmails?: T;
   notifyOrganiserEmail?: T;
   currency?: T;
+  fees?:
+    | T
+    | {
+        deliveryFeeEnabled?: T;
+        deliveryFeeAmount?: T;
+        deliveryFeeThreshold?: T;
+        deliveryFeeLabel?: T;
+      };
+  discountConfig?:
+    | T
+    | {
+        enabled?: T;
+        type?: T;
+        value?: T;
+        label?: T;
+        minimumOrder?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
