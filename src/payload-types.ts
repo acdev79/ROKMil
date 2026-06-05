@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     specimens: Specimen;
     discounts: Discount;
+    orders: Order;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     specimens: SpecimensSelect<false> | SpecimensSelect<true>;
     discounts: DiscountsSelect<false> | DiscountsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -300,6 +302,56 @@ export interface Discount {
   createdAt: string;
 }
 /**
+ * All submitted orders. Edit any order after submission — adjust items, prices, status, or add notes. Collector and team are notified automatically on every save.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  /**
+   * Auto-generated. Never changes.
+   */
+  receiptId: string;
+  status: 'pending' | 'confirmed' | 'fulfilled' | 'cancelled';
+  collectorName: string;
+  collectorEmail?: string | null;
+  collectorPhone?: string | null;
+  collectorMessage?: string | null;
+  /**
+   * Editable after submission. Collector is notified of any changes.
+   */
+  items?:
+    | {
+        name: string;
+        size?: string | null;
+        price: number;
+        qty: number;
+        subtotal?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  subtotal?: number | null;
+  deliveryFee?: number | null;
+  discount?: number | null;
+  /**
+   * Positive adds to total, negative subtracts.
+   */
+  adjustment?: number | null;
+  adjustmentNote?: string | null;
+  total?: number | null;
+  /**
+   * Team only — never sent to collector.
+   */
+  internalNotes?: string | null;
+  fulfilledBy?: string | null;
+  fulfilledAt?: string | null;
+  deliveryMethod?: ('pickup' | 'delivery' | 'other') | null;
+  currency?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -338,6 +390,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'discounts';
         value: number | Discount;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -504,6 +560,41 @@ export interface DiscountsSelect<T extends boolean = true> {
   startsAt?: T;
   expiresAt?: T;
   showOriginalPrice?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  receiptId?: T;
+  status?: T;
+  collectorName?: T;
+  collectorEmail?: T;
+  collectorPhone?: T;
+  collectorMessage?: T;
+  items?:
+    | T
+    | {
+        name?: T;
+        size?: T;
+        price?: T;
+        qty?: T;
+        subtotal?: T;
+        id?: T;
+      };
+  subtotal?: T;
+  deliveryFee?: T;
+  discount?: T;
+  adjustment?: T;
+  adjustmentNote?: T;
+  total?: T;
+  internalNotes?: T;
+  fulfilledBy?: T;
+  fulfilledAt?: T;
+  deliveryMethod?: T;
+  currency?: T;
   updatedAt?: T;
   createdAt?: T;
 }
