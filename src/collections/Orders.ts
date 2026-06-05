@@ -18,18 +18,24 @@ export const Orders: CollectionConfig = {
   admin: {
     useAsTitle: 'receiptId',
     defaultColumns: ['receiptId', 'collectorName', 'total', 'status', 'createdAt'],
-    description: 'All submitted orders. Edit after submission — collector and team notified automatically.',
+    description: 'All submitted orders. View the receipt first — use Edit tab to make changes.',
     listSearchableFields: ['receiptId', 'collectorName', 'collectorEmail', 'collectorPhone'],
     components: {
       views: {
         edit: {
+          default: {
+            tab: {
+              label: '✏️ Edit Order',
+              order: 2,
+            },
+          },
           receiptPreview: {
             Component: '@/components/admin/OrderReceiptPreview',
             path: '/receipt-preview',
             tab: {
-              label: 'Receipt Preview',
+              label: '🧾 Receipt Preview',
               href: '/receipt-preview',
-              order: 100,
+              order: 1,
             },
           },
         },
@@ -45,13 +51,7 @@ export const Orders: CollectionConfig = {
     ],
   },
   fields: [
-    {
-      name: 'receiptId',
-      type: 'text',
-      label: 'Receipt ID',
-      required: true,
-      admin: { readOnly: true },
-    },
+    { name: 'receiptId', type: 'text', label: 'Receipt ID', required: true, admin: { readOnly: true } },
     {
       name: 'status',
       type: 'select',
@@ -82,9 +82,7 @@ export const Orders: CollectionConfig = {
       labels: { singular: 'Item', plural: 'Items' },
       admin: {
         initCollapsed: true,
-        components: {
-          RowLabel: '@/components/admin/OrderItemRowLabel',
-        },
+        components: { RowLabel: '@/components/admin/OrderItemRowLabel' },
       },
       fields: [
         { name: 'name', type: 'text', label: 'Item name', required: true },
@@ -106,28 +104,14 @@ export const Orders: CollectionConfig = {
         { name: 'total', type: 'number', label: 'Final total ($)', min: 0 },
       ],
     },
-    {
-      name: 'internalNotes',
-      type: 'textarea',
-      label: 'Internal Notes',
-      admin: { description: 'Team only — never sent to collector.' },
-    },
+    { name: 'internalNotes', type: 'textarea', label: 'Internal Notes', admin: { description: 'Team only — never sent to collector.' } },
     {
       type: 'collapsible',
       label: '📦 Fulfillment',
       fields: [
         { name: 'fulfilledBy', type: 'text', label: 'Fulfilled by' },
         { name: 'fulfilledAt', type: 'date', label: 'Fulfilled at', admin: { date: { pickerAppearance: 'dayAndTime' } } },
-        {
-          name: 'deliveryMethod',
-          type: 'select',
-          label: 'Delivery method',
-          options: [
-            { label: 'Pickup', value: 'pickup' },
-            { label: 'Delivery', value: 'delivery' },
-            { label: 'Other', value: 'other' },
-          ],
-        },
+        { name: 'deliveryMethod', type: 'select', label: 'Delivery method', options: [{ label: 'Pickup', value: 'pickup' }, { label: 'Delivery', value: 'delivery' }, { label: 'Other', value: 'other' }] },
       ],
     },
     { name: 'currency', type: 'text', label: 'Currency', defaultValue: 'USD', admin: { readOnly: true } },

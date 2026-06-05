@@ -302,7 +302,7 @@ export interface Discount {
   createdAt: string;
 }
 /**
- * All submitted orders. Edit after submission — collector and team notified automatically.
+ * All submitted orders. View the receipt first — use Edit tab to make changes.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
