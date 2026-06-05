@@ -302,7 +302,7 @@ export interface Discount {
   createdAt: string;
 }
 /**
- * All submitted orders. Edit after submission — collector and team are notified automatically.
+ * All submitted orders. Edit after submission — collector and team notified automatically.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
@@ -328,6 +328,9 @@ export interface Order {
   subtotal?: number | null;
   deliveryFee?: number | null;
   discount?: number | null;
+  /**
+   * Positive adds, negative subtracts.
+   */
   adjustment?: number | null;
   adjustmentNote?: string | null;
   total?: number | null;
