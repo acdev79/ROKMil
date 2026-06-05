@@ -18,7 +18,7 @@ export const Orders: CollectionConfig = {
   admin: {
     useAsTitle: 'receiptId',
     defaultColumns: ['receiptId', 'collectorName', 'total', 'status', 'createdAt'],
-    description: 'All submitted orders. Edit after submission — collector and team are notified automatically.',
+    description: 'All submitted orders. Edit after submission — collector and team notified automatically.',
     listSearchableFields: ['receiptId', 'collectorName', 'collectorEmail', 'collectorPhone'],
     components: {
       views: {
@@ -45,7 +45,13 @@ export const Orders: CollectionConfig = {
     ],
   },
   fields: [
-    { name: 'receiptId', type: 'text', label: 'Receipt ID', required: true, admin: { readOnly: true } },
+    {
+      name: 'receiptId',
+      type: 'text',
+      label: 'Receipt ID',
+      required: true,
+      admin: { readOnly: true },
+    },
     {
       name: 'status',
       type: 'select',
@@ -73,6 +79,13 @@ export const Orders: CollectionConfig = {
       name: 'items',
       type: 'array',
       label: 'Items',
+      labels: { singular: 'Item', plural: 'Items' },
+      admin: {
+        initCollapsed: true,
+        components: {
+          RowLabel: '@/components/admin/OrderItemRowLabel',
+        },
+      },
       fields: [
         { name: 'name', type: 'text', label: 'Item name', required: true },
         { name: 'size', type: 'text', label: 'Size' },
@@ -88,19 +101,33 @@ export const Orders: CollectionConfig = {
         { name: 'subtotal', type: 'number', label: 'Subtotal ($)', min: 0 },
         { name: 'deliveryFee', type: 'number', label: 'Delivery fee ($)', defaultValue: 0, min: 0 },
         { name: 'discount', type: 'number', label: 'Discount ($)', defaultValue: 0, min: 0 },
-        { name: 'adjustment', type: 'number', label: 'Manual adjustment ($)', defaultValue: 0 },
+        { name: 'adjustment', type: 'number', label: 'Manual adjustment ($)', defaultValue: 0, admin: { description: 'Positive adds, negative subtracts.' } },
         { name: 'adjustmentNote', type: 'text', label: 'Adjustment reason', admin: { condition: (data) => data?.adjustment !== 0 } },
         { name: 'total', type: 'number', label: 'Final total ($)', min: 0 },
       ],
     },
-    { name: 'internalNotes', type: 'textarea', label: 'Internal Notes', admin: { description: 'Team only — never sent to collector.' } },
+    {
+      name: 'internalNotes',
+      type: 'textarea',
+      label: 'Internal Notes',
+      admin: { description: 'Team only — never sent to collector.' },
+    },
     {
       type: 'collapsible',
       label: '📦 Fulfillment',
       fields: [
         { name: 'fulfilledBy', type: 'text', label: 'Fulfilled by' },
         { name: 'fulfilledAt', type: 'date', label: 'Fulfilled at', admin: { date: { pickerAppearance: 'dayAndTime' } } },
-        { name: 'deliveryMethod', type: 'select', label: 'Delivery method', options: [{ label: 'Pickup', value: 'pickup' }, { label: 'Delivery', value: 'delivery' }, { label: 'Other', value: 'other' }] },
+        {
+          name: 'deliveryMethod',
+          type: 'select',
+          label: 'Delivery method',
+          options: [
+            { label: 'Pickup', value: 'pickup' },
+            { label: 'Delivery', value: 'delivery' },
+            { label: 'Other', value: 'other' },
+          ],
+        },
       ],
     },
     { name: 'currency', type: 'text', label: 'Currency', defaultValue: 'USD', admin: { readOnly: true } },
