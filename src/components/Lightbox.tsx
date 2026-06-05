@@ -104,7 +104,7 @@ export default function Lightbox({
                 {fmt(specimen.originalPrice, currency)}
               </span>
             )}
-            {fmt(specimen.price, currency)}
+            {fmt(specimen.price35g ?? specimen.price15ml ?? specimen.price28g ?? 0, currency)}
             <small>suggested contribution</small>
           </div>
 

@@ -79,9 +79,9 @@ export const CURRENCY_SYMBOLS: Record<string, string> = {
   USD: '$', EUR: '€', GBP: '£', KRW: '₩', AUD: 'A$',
 }
 
-export function fmt(amount: number, currency = 'USD') {
+export function fmt(amount: number | undefined | null, currency = 'USD') {
   const symbol = CURRENCY_SYMBOLS[currency] || '$'
-  return `${symbol}${amount.toLocaleString()}`
+  return amount == null ? `${symbol}0` : `${symbol}${amount.toLocaleString()}`
 }
 
 export function cartItemKey(specimenId: string, size: string) {
