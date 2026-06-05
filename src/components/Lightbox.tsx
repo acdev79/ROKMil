@@ -12,7 +12,7 @@ interface Props {
   inCart: boolean
   onClose: () => void
   onQtyChange: (delta: number) => void
-  onAdd: () => void
+  onAdd: (size: '3.5g' | '28g' | '15ml', qty: number) => void
 }
 
 export default function Lightbox({ specimen, isOpen, currency, qty, inCart, onClose, onQtyChange, onAdd }: Props) {
@@ -134,7 +134,7 @@ export default function Lightbox({ specimen, isOpen, currency, qty, inCart, onCl
             </div>
           )}
 
-          <button className="lb-add-btn" onClick={onAdd}>
+          <button className="lb-add-btn" onClick={() => onAdd(selectedSize, qty)}>
             {inCart ? '✓ Already in Selection' : 'Add to Selection'}
           </button>
         </div>
