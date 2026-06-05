@@ -19,6 +19,7 @@ export const Orders: CollectionConfig = {
     useAsTitle: 'receiptId',
     defaultColumns: ['receiptId', 'collectorName', 'total', 'status', 'createdAt'],
     description: 'Click a Receipt ID to view the order. Use the Edit tab to make changes.',
+    disableBulkDelete: false,
     listSearchableFields: ['receiptId', 'collectorName', 'collectorEmail', 'collectorPhone'],
     components: {
       beforeDocumentControls: ['@/components/admin/OrderEditBanner'],

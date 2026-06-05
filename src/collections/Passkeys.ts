@@ -18,6 +18,7 @@ export const Passkeys: CollectionConfig = {
     useAsTitle: 'code',
     defaultColumns: ['code', 'label', 'reusable', 'usedCount', 'active', 'expiresAt'],
     description: 'Generate passkeys for VIP member access. Still requires SMS verification on first login.',
+    disableBulkDelete: false,
   },
   hooks: {
     beforeChange: [

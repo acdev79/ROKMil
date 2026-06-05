@@ -1,0 +1,17 @@
+
+/* Always show list selection checkboxes */
+.cell-_select {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.row--selected .cell-_select,
+.row:hover .cell-_select {
+  opacity: 1 !important;
+}
+
+/* Make delete action more prominent in list */
+.list-controls__buttons .btn--icon-style-with-border[aria-label*="Delete"],
+.list-controls__buttons .popup-button-list__button--delete {
+  display: flex !important;
+}

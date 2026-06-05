@@ -8,6 +8,7 @@ export const Members: CollectionConfig = {
     useAsTitle: 'fullName',
     defaultColumns: ['fullName', 'phone', 'status', 'verified', 'createdAt'],
     description: 'ROKMil members. Approve access requests, manage verification, and view member profiles.',
+    disableBulkDelete: false,
     listSearchableFields: ['firstName', 'lastName', 'email', 'phone'],
   },
   fields: [
