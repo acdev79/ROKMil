@@ -302,25 +302,19 @@ export interface Discount {
   createdAt: string;
 }
 /**
- * All submitted orders. Edit any order after submission — adjust items, prices, status, or add notes. Collector and team are notified automatically on every save.
+ * All submitted orders. Edit after submission — collector and team are notified automatically.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
  */
 export interface Order {
   id: number;
-  /**
-   * Auto-generated. Never changes.
-   */
   receiptId: string;
   status: 'pending' | 'confirmed' | 'fulfilled' | 'cancelled';
   collectorName: string;
   collectorEmail?: string | null;
   collectorPhone?: string | null;
   collectorMessage?: string | null;
-  /**
-   * Editable after submission. Collector is notified of any changes.
-   */
   items?:
     | {
         name: string;
@@ -335,7 +329,7 @@ export interface Order {
   deliveryFee?: number | null;
   discount?: number | null;
   /**
-   * Positive adds to total, negative subtracts.
+   * Positive adds, negative subtracts.
    */
   adjustment?: number | null;
   adjustmentNote?: string | null;

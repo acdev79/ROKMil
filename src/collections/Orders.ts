@@ -18,29 +18,33 @@ export const Orders: CollectionConfig = {
   admin: {
     useAsTitle: 'receiptId',
     defaultColumns: ['receiptId', 'collectorName', 'total', 'status', 'createdAt'],
-    description: 'All submitted orders. Edit any order after submission — adjust items, prices, status, or add notes. Collector and team are notified automatically on every save.',
+    description: 'All submitted orders. Edit after submission — collector and team are notified automatically.',
     listSearchableFields: ['receiptId', 'collectorName', 'collectorEmail', 'collectorPhone'],
+    components: {
+      views: {
+        edit: {
+          receipt: {
+            Component: '@/components/admin/OrderReceiptPreview',
+            path: '/receipt',
+            Tab: {
+              label: 'Receipt Preview',
+              href: '/receipt',
+            },
+          },
+        },
+      },
+    },
   },
-
-  // ── HOOKS — fire notifications on create and update ──────────────────
   hooks: {
     afterChange: [
-      async ({ doc, operation }) => {
-        // Always notify on create. On update, only notify if status changed or items changed.
+      async ({ doc }) => {
         await sendOrderUpdateNotification(doc)
         return doc
       },
     ],
   },
-
   fields: [
-    {
-      name: 'receiptId',
-      type: 'text',
-      label: 'Receipt ID',
-      required: true,
-      admin: { readOnly: true, description: 'Auto-generated. Never changes.' },
-    },
+    { name: 'receiptId', type: 'text', label: 'Receipt ID', required: true, admin: { readOnly: true } },
     {
       name: 'status',
       type: 'select',
@@ -48,9 +52,9 @@ export const Orders: CollectionConfig = {
       required: true,
       defaultValue: 'pending',
       options: [
-        { label: '⏳ Pending — received, not yet confirmed', value: 'pending' },
-        { label: '✅ Confirmed — team has acknowledged', value: 'confirmed' },
-        { label: '📦 Fulfilled — contribution received, items handed over', value: 'fulfilled' },
+        { label: '⏳ Pending', value: 'pending' },
+        { label: '✅ Confirmed', value: 'confirmed' },
+        { label: '📦 Fulfilled', value: 'fulfilled' },
         { label: '❌ Cancelled', value: 'cancelled' },
       ],
     },
@@ -68,7 +72,6 @@ export const Orders: CollectionConfig = {
       name: 'items',
       type: 'array',
       label: 'Items',
-      admin: { description: 'Editable after submission. Collector is notified of any changes.' },
       fields: [
         { name: 'name', type: 'text', label: 'Item name', required: true },
         { name: 'size', type: 'text', label: 'Size' },
@@ -84,44 +87,19 @@ export const Orders: CollectionConfig = {
         { name: 'subtotal', type: 'number', label: 'Subtotal ($)', min: 0 },
         { name: 'deliveryFee', type: 'number', label: 'Delivery fee ($)', defaultValue: 0, min: 0 },
         { name: 'discount', type: 'number', label: 'Discount ($)', defaultValue: 0, min: 0 },
-        {
-          name: 'adjustment',
-          type: 'number',
-          label: 'Manual adjustment ($)',
-          defaultValue: 0,
-          admin: { description: 'Positive adds to total, negative subtracts.' },
-        },
-        {
-          name: 'adjustmentNote',
-          type: 'text',
-          label: 'Adjustment reason',
-          admin: { condition: (data) => data?.adjustment !== 0 },
-        },
+        { name: 'adjustment', type: 'number', label: 'Manual adjustment ($)', defaultValue: 0, admin: { description: 'Positive adds, negative subtracts.' } },
+        { name: 'adjustmentNote', type: 'text', label: 'Adjustment reason', admin: { condition: (data) => data?.adjustment !== 0 } },
         { name: 'total', type: 'number', label: 'Final total ($)', min: 0 },
       ],
     },
-    {
-      name: 'internalNotes',
-      type: 'textarea',
-      label: 'Internal Notes',
-      admin: { description: 'Team only — never sent to collector.' },
-    },
+    { name: 'internalNotes', type: 'textarea', label: 'Internal Notes', admin: { description: 'Team only — never sent to collector.' } },
     {
       type: 'collapsible',
       label: '📦 Fulfillment',
       fields: [
         { name: 'fulfilledBy', type: 'text', label: 'Fulfilled by' },
         { name: 'fulfilledAt', type: 'date', label: 'Fulfilled at', admin: { date: { pickerAppearance: 'dayAndTime' } } },
-        {
-          name: 'deliveryMethod',
-          type: 'select',
-          label: 'Delivery method',
-          options: [
-            { label: 'Pickup', value: 'pickup' },
-            { label: 'Delivery', value: 'delivery' },
-            { label: 'Other', value: 'other' },
-          ],
-        },
+        { name: 'deliveryMethod', type: 'select', label: 'Delivery method', options: [{ label: 'Pickup', value: 'pickup' }, { label: 'Delivery', value: 'delivery' }, { label: 'Other', value: 'other' }] },
       ],
     },
     { name: 'currency', type: 'text', label: 'Currency', defaultValue: 'USD', admin: { readOnly: true } },
